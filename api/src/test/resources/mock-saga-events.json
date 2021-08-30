@@ -1,0 +1,26 @@
+[
+  {
+    "sagaEventState": "INITIATED",
+    "sagaEventOutcome": "INITIATE_SUCCESS",
+    "sagaStepNumber": 1,
+    "sagaEventResponse": "{\"createUser\":null,\"updateUser\":\"USER\",\"createDate\":null,\"updateDate\":null,\"macroId\":\"0a612f49-79f6-11db-8179-f879c7900060\",\"macroCode\":\"ABC\",\"businessUseTypeCode\":\"PENREG\",\"macroTypeCode\":\"MERGE\",\"macroText\": \"hello\"}",
+    "createUser": "MACRO_CREATE_SAGA",
+    "updateUser": "MACRO_CREATE_SAGA"
+  },
+  {
+    "sagaEventState": "CREATE_MACRO",
+    "sagaEventOutcome": "MACRO_CREATED",
+    "sagaStepNumber": 2,
+    "sagaEventResponse": "{\"createUser\":null,\"updateUser\":\"USER\",\"createDate\":null,\"updateDate\":null,\"macroId\":\"0a612f49-79f6-11db-8179-f879c7900060\",\"macroCode\":\"ABC\",\"businessUseTypeCode\":\"PENREG\",\"macroTypeCode\":\"MERGE\",\"macroText\": \"hello\"}",
+    "createUser": "MACRO_CREATE_SAGA",
+    "updateUser": "MACRO_CREATE_SAGA"
+  },
+  {
+    "sagaEventState": "NOTIFY_MACRO_CREATE",
+    "sagaEventOutcome": "NOTIFIED",
+    "sagaStepNumber": 3,
+    "sagaEventResponse": " ",
+    "createUser": "MACRO_CREATE_SAGA",
+    "updateUser": "MACRO_CREATE_SAGA"
+  }
+]

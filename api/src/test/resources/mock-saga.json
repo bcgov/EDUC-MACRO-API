@@ -1,0 +1,9 @@
+{
+  "sagaName": "MACRO_CREATE_SAGA",
+  "sagaState": "COMPLETED",
+  "status": "COMPLETED",
+  "createUser": "USER",
+  "updateUser": "USER",
+  "macroId": "ac336ffc-70d4-15cf-8170-e952f901000a",
+  "payload": ""
+}

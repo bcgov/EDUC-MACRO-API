@@ -4,7 +4,7 @@ import ca.bc.gov.educ.api.macro.constants.BusinessUseTypeCodes;
 import ca.bc.gov.educ.api.macro.constants.EventType;
 import ca.bc.gov.educ.api.macro.constants.TopicsEnum;
 import ca.bc.gov.educ.api.macro.messaging.MessagePublisher;
-import ca.bc.gov.educ.api.macro.model.SagaEventStates;
+import ca.bc.gov.educ.api.macro.model.SagaEvent;
 import ca.bc.gov.educ.api.macro.struct.v1.Event;
 import ca.bc.gov.educ.api.macro.struct.v1.MacroEditNotificationEvent;
 import ca.bc.gov.educ.api.macro.model.Saga;
@@ -54,7 +54,7 @@ public abstract class BaseMacroOrchestrator extends BaseOrchestrator<Macro> {
    * @throws JsonProcessingException the json processing exception
    */
   protected void editMacro(final Event event, final Saga saga, final Macro macroSagaData, final EventType editEventType) throws JsonProcessingException {
-    final SagaEventStates eventStates = this.createEventState(saga, event.getEventType(), event.getEventOutcome(), event.getEventPayload());
+    final SagaEvent eventStates = this.createEventState(saga, event.getEventType(), event.getEventOutcome(), event.getEventPayload());
     saga.setStatus(IN_PROGRESS.toString());
     saga.setSagaState(editEventType.toString()); // set current event as saga state.
     this.getSagaService().updateAttachedSagaWithEvents(saga, eventStates);
@@ -79,7 +79,7 @@ public abstract class BaseMacroOrchestrator extends BaseOrchestrator<Macro> {
    * @throws JsonProcessingException the json processing exception
    */
   protected void sendMacroEditEmail(final Event event, final Saga saga, final Macro macroSagaData, final EventType notifyEventType) throws JsonProcessingException {
-    final SagaEventStates eventStates = this.createEventState(saga, event.getEventType(), event.getEventOutcome(), event.getEventPayload());
+    final SagaEvent eventStates = this.createEventState(saga, event.getEventType(), event.getEventOutcome(), event.getEventPayload());
     saga.setSagaState(notifyEventType.toString()); // set current event as saga state.
     this.getSagaService().updateAttachedSagaWithEvents(saga, eventStates);
 

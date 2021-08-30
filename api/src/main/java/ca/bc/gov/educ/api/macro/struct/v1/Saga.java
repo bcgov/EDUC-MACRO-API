@@ -22,7 +22,7 @@ public class Saga {
   /**
    * The Student id.
    */
-  UUID studentID;
+  UUID macroId;
   /**
    * The Saga name.
    */

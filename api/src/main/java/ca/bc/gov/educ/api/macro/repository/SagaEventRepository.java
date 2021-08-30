@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.macro.repository;
 
 import ca.bc.gov.educ.api.macro.model.Saga;
-import ca.bc.gov.educ.api.macro.model.SagaEventStates;
+import ca.bc.gov.educ.api.macro.model.SagaEvent;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,14 +13,14 @@ import java.util.UUID;
  * The interface Saga event repository.
  */
 @Repository
-public interface SagaEventRepository extends CrudRepository<SagaEventStates, UUID> {
+public interface SagaEventRepository extends CrudRepository<SagaEvent, UUID> {
   /**
    * Find by saga list.
    *
    * @param saga the saga
    * @return the list
    */
-  List<SagaEventStates> findBySaga(Saga saga);
+  List<SagaEvent> findBySaga(Saga saga);
 
   /**
    * Find by saga and saga event outcome and saga event state and saga step number optional.
@@ -31,5 +31,5 @@ public interface SagaEventRepository extends CrudRepository<SagaEventStates, UUI
    * @param stepNumber   the step number
    * @return the optional
    */
-  Optional<SagaEventStates> findBySagaAndSagaEventOutcomeAndSagaEventStateAndSagaStepNumber(Saga saga, String eventOutcome, String eventState, int stepNumber);
+  Optional<SagaEvent> findBySagaAndSagaEventOutcomeAndSagaEventStateAndSagaStepNumber(Saga saga, String eventOutcome, String eventState, int stepNumber);
 }

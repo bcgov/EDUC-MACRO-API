@@ -22,7 +22,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "MACRO_SAGA_EVENT_STATES")
 @DynamicUpdate
-public class SagaEventStates {
+public class SagaEvent {
 
   /**
    * The Saga event id.
@@ -123,7 +123,7 @@ public class SagaEventStates {
   /**
    * The type Saga event states builder.
    */
-  public static class SagaEventStatesBuilder {
+  public static class SagaEventBuilder {
     /**
      * The Saga event response bytes.
      */
@@ -135,7 +135,7 @@ public class SagaEventStates {
      * @param sagaEventResponse the saga event response
      * @return the saga event states builder
      */
-    public SagaEventStatesBuilder sagaEventResponse(final String sagaEventResponse) {
+    public SagaEventBuilder sagaEventResponse(final String sagaEventResponse) {
       this.sagaEventResponseBytes = sagaEventResponse.getBytes(StandardCharsets.UTF_8);
       return this;
     }

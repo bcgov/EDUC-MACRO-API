@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.macro.service;
 
 import ca.bc.gov.educ.api.macro.constants.EventType;
-import ca.bc.gov.educ.api.macro.model.SagaEventStates;
+import ca.bc.gov.educ.api.macro.model.SagaEvent;
 import ca.bc.gov.educ.api.macro.repository.SagaEventRepository;
 import ca.bc.gov.educ.api.macro.model.Saga;
 import ca.bc.gov.educ.api.macro.repository.SagaRepository;
@@ -10,6 +10,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import static ca.bc.gov.educ.api.macro.constants.SagaStatusEnum.STARTED;
 import static lombok.AccessLevel.PRIVATE;
@@ -70,17 +77,17 @@ public class SagaService {
    * so dont remove this check. removing this check will lead to duplicate records in the child table.
    *
    * @param saga            the saga object.
-   * @param sagaEventStates the saga event
+   * @param sagaEvent the saga event
    */
   @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(multiplier = 2, delay = 2000))
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void updateAttachedSagaWithEvents(final Saga saga, final SagaEventStates sagaEventStates) {
+  public void updateAttachedSagaWithEvents(final Saga saga, final SagaEvent sagaEvent) {
     saga.setUpdateDate(LocalDateTime.now());
     this.getSagaRepository().save(saga);
     val result = this.getSagaEventRepository()
-        .findBySagaAndSagaEventOutcomeAndSagaEventStateAndSagaStepNumber(saga, sagaEventStates.getSagaEventOutcome(), sagaEventStates.getSagaEventState(), sagaEventStates.getSagaStepNumber() - 1); //check if the previous step was same and had same outcome, and it is due to replay.
+        .findBySagaAndSagaEventOutcomeAndSagaEventStateAndSagaStepNumber(saga, sagaEvent.getSagaEventOutcome(), sagaEvent.getSagaEventState(), sagaEvent.getSagaStepNumber() - 1); //check if the previous step was same and had same outcome, and it is due to replay.
     if (result.isEmpty()) {
-      this.getSagaEventRepository().save(sagaEventStates);
+      this.getSagaEventRepository().save(sagaEvent);
     }
   }
 
@@ -100,7 +107,7 @@ public class SagaService {
    * @param saga the saga
    * @return the list
    */
-  public List<SagaEventStates> findAllSagaStates(final Saga saga) {
+  public List<SagaEvent> findAllSagaStates(final Saga saga) {
     return this.getSagaEventRepository().findBySaga(saga);
   }
 
@@ -122,7 +129,7 @@ public class SagaService {
    * @param sagaName  the saga name
    * @return the list
    */
-  public Optional<Saga> findByStudentIDAndSagaName(final UUID macroId, final String sagaName) {
+  public Optional<Saga> findByMacroIdAndSagaName(final UUID macroId, final String sagaName) {
     return this.getSagaRepository().findByMacroIdAndSagaName(macroId, sagaName);
   }
 
@@ -173,5 +180,26 @@ public class SagaService {
         .updateDate(LocalDateTime.now())
         .build();
     return this.createSagaRecord(saga);
+  }
+
+  /**
+   * Find all completable future.
+   *
+   * @param specs      the saga specs
+   * @param pageNumber the page number
+   * @param pageSize   the page size
+   * @param sorts      the sorts
+   * @return the completable future
+   */
+  @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+  public CompletableFuture<Page<Saga>> findAll(final Specification<Saga> specs, final Integer pageNumber, final Integer pageSize, final List<Sort.Order> sorts) {
+    return CompletableFuture.supplyAsync(() -> {
+      final Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sorts));
+      try {
+        return this.sagaRepository.findAll(specs, paging);
+      } catch (final Exception ex) {
+        throw new CompletionException(ex);
+      }
+    });
   }
 }

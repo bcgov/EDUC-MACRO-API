@@ -13,8 +13,8 @@ pipeline{
       OWNER = 'bcgov'
       JOB_NAME = 'master'
       TAG = 'latest'
-      TARGET_ENV = 'dev'
-      STAGING_ENV = 'Dev'
+      TARGET_ENV = 'tools'
+      STAGING_ENV = 'Tools'
       TARGET_ENVIRONMENT = "${NAMESPACE}-${TARGET_ENV}"
 
       APP_DOMAIN = 'apps.silver.devops.gov.bc.ca'
@@ -24,9 +24,9 @@ pipeline{
       MIN_REPLICAS = "1"
       MAX_REPLICAS = "1"
       MIN_CPU = "50m"
-      MAX_CPU = "150m"
-      MIN_MEM = "400Mi"
-      MAX_MEM = "750Mi"
+      MAX_CPU = "100m"
+      MIN_MEM = "350Mi"
+      MAX_MEM = "700Mi"
   }
   stages{
     stage('Initialize') {

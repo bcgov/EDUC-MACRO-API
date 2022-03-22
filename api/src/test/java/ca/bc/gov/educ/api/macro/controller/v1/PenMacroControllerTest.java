@@ -6,6 +6,8 @@ import ca.bc.gov.educ.api.macro.constants.v1.URL;
 import ca.bc.gov.educ.api.macro.mapper.v1.MacroMapper;
 import ca.bc.gov.educ.api.macro.model.MacroEntity;
 import ca.bc.gov.educ.api.macro.repository.MacroRepository;
+import ca.bc.gov.educ.api.macro.repository.SagaEventRepository;
+import ca.bc.gov.educ.api.macro.repository.SagaRepository;
 import ca.bc.gov.educ.api.macro.service.MacroService;
 import ca.bc.gov.educ.api.macro.service.SagaService;
 import ca.bc.gov.educ.api.macro.struct.v1.Macro;
@@ -55,6 +57,12 @@ public class PenMacroControllerTest {
   MacroRepository macroRepository;
 
   @Autowired
+  SagaRepository repository;
+
+  @Autowired
+  SagaEventRepository sagaEventRepository;
+
+  @Autowired
   SagaService sagaService;
 
   private final String macroID = "7f000101-7151-1d84-8171-5187006c0001";
@@ -67,6 +75,8 @@ public class PenMacroControllerTest {
   @After
   public void after() {
     this.macroRepository.deleteAll();
+    sagaEventRepository.deleteAll();
+    repository.deleteAll();
   }
 
   @Test

@@ -9,6 +9,7 @@ import ca.bc.gov.educ.api.macro.repository.MacroEventRepository;
 import ca.bc.gov.educ.api.macro.repository.SagaEventRepository;
 import ca.bc.gov.educ.api.macro.repository.SagaRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,13 @@ public class PurgeOldSagaRecordsSchedulerTest {
   @Autowired
   PurgeOldSagaRecordsScheduler purgeOldSagaRecordsScheduler;
 
+
+  @After
+  public void after() {
+    this.macroEventRepository.deleteAll();
+    this.sagaEventRepository.deleteAll();
+    this.repository.deleteAll();
+  }
 
   @Test
   public void pollSagaTableAndPurgeOldRecords_givenOldRecordsPresent_shouldBeDeleted() {

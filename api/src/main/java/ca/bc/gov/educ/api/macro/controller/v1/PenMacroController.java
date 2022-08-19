@@ -155,6 +155,6 @@ public class PenMacroController implements PenMacroEndpoint {
    * @return the business use type codes
    */
   private List<String> getBusinessUseTypeCodes() {
-    return List.of(BusinessUseTypeCodes.GMP.toString(), BusinessUseTypeCodes.UMP.toString(), BusinessUseTypeCodes.PENREG.toString());
+    return List.of(BusinessUseTypeCodes.GMP.toString(), BusinessUseTypeCodes.UMP.toString(), BusinessUseTypeCodes.PENREG.toString(), BusinessUseTypeCodes.EDX.toString());
   }
 }

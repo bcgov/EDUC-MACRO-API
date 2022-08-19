@@ -18,7 +18,11 @@ public enum BusinessUseTypeCodes {
   /**
    * PENREG
    */
-  PENREG("PENRegistry", "PEN Registry");
+  PENREG("PENRegistry", "PEN Registry"),
+  /**
+   * EDX
+   */
+  EDX("SecureExchange", "EDX");
 
   /**
    * The Name.

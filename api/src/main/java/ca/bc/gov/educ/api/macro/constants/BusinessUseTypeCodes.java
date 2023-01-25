@@ -3,7 +3,7 @@ package ca.bc.gov.educ.api.macro.constants;
 import lombok.Getter;
 
 /**
- * The enum Business Use Type codes.
+ * The enum Business Use Type codes. Trigger check please
  */
 @Getter
 public enum BusinessUseTypeCodes {

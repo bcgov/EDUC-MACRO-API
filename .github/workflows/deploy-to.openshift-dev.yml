@@ -29,7 +29,7 @@ env:
   ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
 
   APP_NAME: 'macro-api'
-  DB_NAME: 'edx_api'
+  DB_NAME: 'macro_api'
   REPO_NAME: "educ-macro-api"
   BRANCH: "master"
   APP_NAME_FULL: "macro-api-master"

@@ -1,19 +1,18 @@
-name: Build & Deploy to TEST
+name: Deploy to PROD
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
+  # Added this comment
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  OPENSHIFT_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}-test
+  OPENSHIFT_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}-prod
 
   DB_JDBC_CONNECT_STRING: ${{ secrets.DB_JDBC_CONNECT_STRING }}
   DB_PWD: ${{ secrets.DB_PWD }}
   DB_USER: ${{ secrets.DB_USER }}
   SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
-
-  SITE_URL: ${{ secrets.SITE_URL }}
 
   # 🖊️ EDIT to change the image registry settings.
   # Registries such as GHCR, Quay.io, and Docker Hub are supported.
@@ -21,36 +20,33 @@ env:
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
-  # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
-  IMAGE_TAGS: ""
-
   SPRING_BOOT_IMAGE_NAME: macro-api-master
-  DOCKER_ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca/docker-remote
-  ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
 
   APP_NAME: 'macro-api'
   DB_NAME: 'macro_api'
   REPO_NAME: "educ-macro-api"
   BRANCH: "master"
-  APP_NAME_FULL: "macro-api-master"
   NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
+  TARGET_ENV: "prod"
+  MIN_REPLICAS: "3"
+  MAX_REPLICAS: "3"
   MIN_CPU: "75m"
   MAX_CPU: "150m"
   MIN_MEM: "400Mi"
   MAX_MEM: "800Mi"
-  MIN_REPLICAS_TEST: "2"
-  MAX_REPLICAS_TEST: "2"
 
 on:
+  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:
 
 jobs:
-  deploy-test:
-    name: Deploy to OpenShift TEST
+  openshift-ci-cd:
+    name: Deploy to OpenShift PROD
+    # ubuntu-20.04 can also be used.
     runs-on: ubuntu-20.04
-    environment: test
+    environment: production
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
@@ -98,6 +94,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -113,13 +113,13 @@ jobs:
           oc rollout cancel dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
           || true && echo "No rollout in progress"
           
-          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ env.TAG }} ${{ env.NAMESPACE }}-test/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ env.TAG }}
+          oc tag ${{ env.NAMESPACE }}-test/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ steps.get-latest-tag.outputs.tag }}
           
           # Process and apply deployment template
-          oc process -f tools/openshift/api.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS_TEST }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS_TEST }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
+          oc process -f tools/openshift/api.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ steps.get-latest-tag.outputs.tag }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
           | oc apply -f -
           
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh | bash /dev/stdin test ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.COMMON_NAMESPACE }} ${{ env.DB_JDBC_CONNECT_STRING }} ${{ env.DB_PWD }} ${{ env.DB_USER }} ${{ env.SPLUNK_TOKEN }} ${{ env.SITE_URL }}
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ steps.get-latest-tag.outputs.tag }}/tools/config/update-configmap.sh | bash /dev/stdin ${{ env.TARGET_ENV }} ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.COMMON_NAMESPACE }} ${{ env.DB_JDBC_CONNECT_STRING }} ${{ env.DB_PWD }} ${{ env.DB_USER }} ${{ env.SPLUNK_TOKEN }}
           
           # Start rollout (if necessary) and follow it
           oc rollout latest dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
@@ -127,8 +127,3 @@ jobs:
           oc logs -f dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
-
-      - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.1.0
-        with:
-          target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE }}.apps.silver.devops.gov.bc.ca/v3/api-docs'

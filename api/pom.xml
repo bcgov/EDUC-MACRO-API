@@ -24,15 +24,15 @@
       src/main/java/ca/bc/gov/educ/api/macro/MacroApiResourceApplication.java,
       src/test/**,
     </sonar.exclusions>
-    <java.version>11</java.version>
+    <java.version>19</java.version>
 
-    <maven.compiler.version>3.8.0</maven.compiler.version>
+    <maven.compiler.version>3.10.1</maven.compiler.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
+    <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
     <shedlock.version>4.20.0</shedlock.version>
     <springdoc.version>1.6.8</springdoc.version>
-    <lombok.version>1.18.12</lombok.version>
+    <lombok.version>1.18.24</lombok.version>
     <nats.version>2.11.0</nats.version>
     <guava.version>30.1.1-jre</guava.version>
     <ojdbc.version>12.2.0.1</ojdbc.version>
@@ -42,14 +42,10 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.8</version>
+    <version>3.0.2</version>
   </parent>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -71,11 +67,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>5.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -111,13 +102,14 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>javax.persistence-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${org.mapstruct.version}</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -134,11 +126,6 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
       <version>${springdoc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>${org.mapstruct.version}</version>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
@@ -185,9 +172,9 @@
     </dependency>
     <!-- https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams -->
     <dependency>
-      <groupId>pl.pragmatists</groupId>
-      <artifactId>JUnitParams</artifactId>
-      <version>1.1.1</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>5.9.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -291,6 +278,7 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>${maven.compiler.version}</version>
             <configuration>
@@ -298,14 +286,14 @@
               <target>${java.version}</target>
               <annotationProcessorPaths>
                 <path>
-                  <groupId>org.mapstruct</groupId>
-                  <artifactId>mapstruct-processor</artifactId>
-                  <version>${org.mapstruct.version}</version>
-                </path>
-                <path>
                   <groupId>org.projectlombok</groupId>
                   <artifactId>lombok</artifactId>
                   <version>${lombok.version}</version>
+                </path>
+                <path>
+                  <groupId>org.mapstruct</groupId>
+                  <artifactId>mapstruct-processor</artifactId>
+                  <version>${org.mapstruct.version}</version>
                 </path>
                 <path>
                   <groupId>org.springframework</groupId>
@@ -351,6 +339,7 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.4</version>
             <executions>
               <execution>
                 <id>prepare-agent</id>

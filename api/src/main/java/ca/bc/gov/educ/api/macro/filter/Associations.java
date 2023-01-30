@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.macro.filter;
 
 import lombok.Getter;
 
-import javax.persistence.criteria.Join;
+import jakarta.persistence.criteria.Join;
 import java.util.*;
 
 /**

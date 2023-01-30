@@ -3,8 +3,8 @@ package ca.bc.gov.educ.api.macro.filter;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.criteria.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.criteria.*;
 import java.util.EnumMap;
 import java.util.function.BiFunction;
 

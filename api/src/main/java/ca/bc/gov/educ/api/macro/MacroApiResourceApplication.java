@@ -84,25 +84,5 @@ public class MacroApiResourceApplication {
           .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
       return http.build();
     }
-
-    /**
-     * Configure paths to be excluded from security.
-     *
-     * @param web the web
-     */
-//    @Override
-//    public void configure(final WebSecurity web) {
-//      web.ignoring().antMatchers("/v3/api-docs/**",
-//        "/actuator/health", "/actuator/prometheus", "/actuator/metrics/**",
-//        "/swagger-ui/**");
-//    }
-//
-//    @Override
-//    protected void configure(final HttpSecurity http) throws Exception {
-//      http
-//          .authorizeRequests()
-//          .anyRequest().authenticated().and()
-//          .oauth2ResourceServer().jwt();
-//    }
   }
 }

@@ -85,7 +85,7 @@ PARSER_CONFIG="
 "
 
 if [ "$envValue" = "dev" ]; then
-  HELPDESK_EMAIL=aditya.sharma@gov.bc.ca
+  HELPDESK_EMAIL=EDUCDO@Victoria1.gov.bc.ca
 fi
 
 if [ "$envValue" = "test" ]; then

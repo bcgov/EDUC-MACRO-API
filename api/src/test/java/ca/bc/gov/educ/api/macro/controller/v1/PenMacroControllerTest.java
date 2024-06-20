@@ -187,6 +187,19 @@ public class PenMacroControllerTest {
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$").exists());
   }
 
+  @Test
+  public void testCreateMacro_GivenDuplicateMacroPayload_ShouldReturnStatusBadRequest() throws Exception {
+    MacroEntity macroEntity = createMacroEntities("PENREG");
+    this.macroRepository.save(macroEntity);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
+            .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(dummyMacroJson("PENREG")))
+        .andDo(print()).andExpect(status().isBadRequest());
+  }
+
   //update macro saga
   @Test
   public void testUpdateMacro_GivenInvalidPayload_ShouldReturnStatusBadRequest() throws Exception {

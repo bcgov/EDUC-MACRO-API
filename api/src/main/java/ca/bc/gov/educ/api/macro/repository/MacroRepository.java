@@ -13,6 +13,8 @@ public interface MacroRepository extends JpaRepository<MacroEntity, UUID> {
 
   List<MacroEntity> findAllByBusinessUseTypeCodeAndMacroTypeCode(String businessUseTypeCode, String macroTypeCode);
 
+  List<MacroEntity> findAllByBusinessUseTypeCodeAndMacroTypeCodeAndMacroCode(String businessUseTypeCode, String macroTypeCode, String macroCode);
+
   List<MacroEntity> findAllByBusinessUseTypeCode(String businessUseTypeCode);
 
   List<MacroEntity> findAllByBusinessUseTypeCodeIn(Collection<String> businessUseTypeCodes);

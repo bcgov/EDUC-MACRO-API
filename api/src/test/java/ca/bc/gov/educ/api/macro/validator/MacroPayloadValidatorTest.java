@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.macro.validator;
 
 import ca.bc.gov.educ.api.macro.MacroApiResourceApplication;
 import ca.bc.gov.educ.api.macro.constants.BusinessUseTypeCodes;
+import ca.bc.gov.educ.api.macro.repository.*;
 import ca.bc.gov.educ.api.macro.struct.v1.Macro;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -26,11 +28,14 @@ public class MacroPayloadValidatorTest {
   @InjectMocks
   MacroPayloadValidator macroPayloadValidator;
 
+  @MockBean
+  private MacroRepository macroRepository;
+
   List<String> businessUseTypeCodes = List.of(BusinessUseTypeCodes.GMP.toString(), BusinessUseTypeCodes.UMP.toString(), BusinessUseTypeCodes.PENREG.toString());
 
   @Before
   public void before() {
-    this.macroPayloadValidator = new MacroPayloadValidator();
+    this.macroPayloadValidator = new MacroPayloadValidator(macroRepository);
   }
 
   @Test

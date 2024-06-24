@@ -92,7 +92,7 @@ public class MacroAPIControllerTest {
   @Test
   public void testReadSaga_GivenInValidID_ShouldReturnStatusNotFound() throws Exception {
     this.mockMvc.perform(get(URL.BASE_URL + "/saga/" + UUID.randomUUID().toString())
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isNotFound());
@@ -104,7 +104,7 @@ public class MacroAPIControllerTest {
     var sagaFromDB = sagaService.createSagaRecordInDB(SagaEnum.MACRO_CREATE_SAGA.toString(), "Test", payload, UUID.fromString(macroID));
 
     this.mockMvc.perform(get(URL.BASE_URL + "/saga/" + sagaFromDB.getSagaId().toString())
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk())
@@ -129,7 +129,7 @@ public class MacroAPIControllerTest {
     this.repository.saveAll(sagaEntities);
     final MvcResult result = this.mockMvc
       .perform(get("/api/v1/macro/saga/paginated")
-        .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+        .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
         .contentType(APPLICATION_JSON))
       .andReturn();
     this.mockMvc.perform(asyncDispatch(result)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.content", hasSize(3)));
@@ -140,7 +140,7 @@ public class MacroAPIControllerTest {
   public void testGetSagaPaginated_givenNoData_shouldReturnStatusOk() throws Exception {
     final MvcResult result = this.mockMvc
       .perform(get("/api/v1/macro/saga/paginated")
-        .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+        .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
         .contentType(APPLICATION_JSON))
       .andReturn();
     this.mockMvc.perform(asyncDispatch(result)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.content", hasSize(0)));
@@ -175,7 +175,7 @@ public class MacroAPIControllerTest {
 
     final MvcResult result = this.mockMvc
       .perform(get("/api/v1/macro/saga/paginated")
-        .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+        .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
         .param("searchCriteriaList", criteriaJSON)
         .contentType(APPLICATION_JSON))
       .andReturn();
@@ -186,7 +186,7 @@ public class MacroAPIControllerTest {
   @SuppressWarnings("java:S100")
   public void testReadSagaEvents_givenSagaDoesntExist_shouldReturnStatusNotFound() throws Exception {
     this.mockMvc.perform(get("/api/v1/macro/saga/{sagaId}/saga-events", UUID.randomUUID())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA")))
       .contentType(APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
   }
 
@@ -212,14 +212,14 @@ public class MacroAPIControllerTest {
     }
     this.sagaEventRepository.saveAll(sagaEvents);
     this.mockMvc.perform(get("/api/v1/macro/saga/{sagaId}/saga-events", saga.getSagaId())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_READ_SAGA"))))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_READ_SAGA"))))
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3)));
   }
 
   @Test
   public void testUpdateSaga_givenNoBody_shouldReturn400() throws Exception {
     this.mockMvc.perform(put("/api/v1/macro/saga/{sagaId}", UUID.randomUUID())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
       .contentType(APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest());
   }
 
@@ -227,7 +227,7 @@ public class MacroAPIControllerTest {
   public void testUpdateSaga_givenInvalidID_shouldReturn404() throws Exception {
     val saga = createMockSaga();
     this.mockMvc.perform(put("/api/v1/macro/saga/{sagaId}", UUID.randomUUID()).content(objectMapper.writeValueAsBytes(saga))
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
       .contentType(APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
   }
 
@@ -236,7 +236,7 @@ public class MacroAPIControllerTest {
     final var sagaFromDB = this.sagaService.createSagaRecordInDB(MACRO_CREATE_SAGA.toString(), "Test", "Test", UUID.fromString(this.macroID));
     sagaFromDB.setUpdateDate(LocalDateTime.now());
     this.mockMvc.perform(put("/api/v1/macro/saga/{sagaId}", sagaFromDB.getSagaId()).content(objectMapper.writeValueAsBytes(mapper.toStruct(sagaFromDB)))
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
       .contentType(APPLICATION_JSON)).andDo(print()).andExpect(status().isConflict());
   }
 
@@ -245,7 +245,7 @@ public class MacroAPIControllerTest {
     final var sagaFromDB = this.sagaService.createSagaRecordInDB(MACRO_CREATE_SAGA.toString(), "Test", "Test", UUID.fromString(this.macroID));
     sagaFromDB.setUpdateDate(sagaFromDB.getUpdateDate().withNano((int)Math.round(sagaFromDB.getUpdateDate().getNano()/1000.00)*1000)); //db limits precision, so need to adjust
     this.mockMvc.perform(put("/api/v1/macro/saga/{sagaId}", sagaFromDB.getSagaId()).content(objectMapper.writeValueAsBytes(mapper.toStruct(sagaFromDB)))
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "MACRO_WRITE_SAGA")))
       .contentType(APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
   }
 

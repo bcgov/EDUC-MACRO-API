@@ -82,14 +82,14 @@ public class PenMacroControllerTest {
   @Test
   public void testRetrievePenMacros_ShouldReturnStatusOK() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO)
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
             .andDo(print()).andExpect(status().isOk());
   }
 
   @Test
   public void testRetrievePenMacros_GivenInvalidMacroID_ShouldReturnStatusNotFound() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO + URL.MACRO_ID,UUID.randomUUID().toString())
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
             .andDo(print()).andExpect(status().isNotFound());
   }
 
@@ -97,7 +97,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenMacroIDWithInvalidBusinessUseTypeCode_ShouldReturnStatusNotFound() throws Exception {
     MacroEntity savedEntity = createMacroEntities("OTHER");
     this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO + URL.MACRO_ID,savedEntity.getMacroId().toString())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
       .andDo(print()).andExpect(status().isNotFound());
   }
 
@@ -105,7 +105,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenValidMacroID_ShouldReturnStatusOK() throws Exception {
     MacroEntity savedEntity = createMacroEntities("GMP");
     final var result = this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO + URL.MACRO_ID, savedEntity.getMacroId().toString())
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
             .andDo(print()).andExpect(jsonPath("$.macroId").value(savedEntity.getMacroId().toString())).andExpect(status().isOk()).andReturn();
     assertThat(result).isNotNull();
   }
@@ -114,7 +114,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenValidBusinessUseTypeCode_ShouldReturnStatusOK() throws Exception {
     MacroEntity savedEntity = createMacroEntities("GMP");
     final var result = this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO +"?businessUseTypeCode=" + savedEntity.getBusinessUseTypeCode())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(1)));
     assertThat(result).isNotNull();
   }
@@ -123,7 +123,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenInvalidBusinessUseTypeCode_ShouldReturnStatusOK() throws Exception {
     MacroEntity savedEntity = createMacroEntities("OTHER");
     final var result = this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO +"?businessUseTypeCode=" + savedEntity.getBusinessUseTypeCode())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
     assertThat(result).isNotNull();
   }
@@ -132,7 +132,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenValidBusinessUseTypeCodeAndMacroTypeCode_ShouldReturnStatusOK() throws Exception {
     MacroEntity savedEntity = createMacroEntities("GMP");
     final var result = this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO +"?businessUseTypeCode=" + savedEntity.getBusinessUseTypeCode() + "&macroTypeCode=" + savedEntity.getMacroTypeCode())
-            .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
             .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(1)));
     assertThat(result).isNotNull();
   }
@@ -141,7 +141,7 @@ public class PenMacroControllerTest {
   public void testRetrievePenMacros_GivenInvalidBusinessUseTypeCodeAndMacroTypeCode_ShouldReturnStatusOK() throws Exception {
     MacroEntity savedEntity = createMacroEntities("OTHER");
     final var result = this.mockMvc.perform(MockMvcRequestBuilders.get(URL.BASE_URL + URL.PEN_MACRO +"?businessUseTypeCode=" + savedEntity.getBusinessUseTypeCode() + "&macroTypeCode=" + savedEntity.getMacroTypeCode())
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_PEN_MACRO"))))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "READ_PEN_MACRO"))))
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
     assertThat(result).isNotNull();
   }
@@ -150,7 +150,7 @@ public class PenMacroControllerTest {
   @Test
   public void testCreateMacro_GivenInvalidPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(placeholderInvalidSagaData()))
@@ -160,7 +160,7 @@ public class PenMacroControllerTest {
   @Test
   public void testCreateMacro_GivenPayloadWithMacroId_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(dummyMacroJsonWithId("PENREG")))
@@ -170,7 +170,7 @@ public class PenMacroControllerTest {
   @Test
   public void testCreateMacro_GivenPayloadWithInvalidBusinessUseTypeCode_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(dummyMacroJson("OTHER")))
@@ -180,18 +180,31 @@ public class PenMacroControllerTest {
   @Test
   public void testCreateMacro_GivenValidPayload_ShouldReturnStatusOk() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(dummyMacroJson("PENREG")))
       .andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$").exists());
   }
 
+  @Test
+  public void testCreateMacro_GivenDuplicateMacroPayload_ShouldReturnStatusBadRequest() throws Exception {
+    MacroEntity macroEntity = createMacroEntities("PENREG");
+    this.macroRepository.save(macroEntity);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/create-macro")
+            .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(dummyMacroJson("PENREG")))
+        .andDo(print()).andExpect(status().isBadRequest());
+  }
+
   //update macro saga
   @Test
   public void testUpdateMacro_GivenInvalidPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/update-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(placeholderInvalidSagaData()))
@@ -201,7 +214,7 @@ public class PenMacroControllerTest {
   @Test
   public void testUpdateMacro_GivenValidPayload_ShouldReturnStatusOk() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/update-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(dummyMacroJsonWithId("PENREG")))
@@ -213,7 +226,7 @@ public class PenMacroControllerTest {
     var payload = dummyMacroJsonWithId("PENREG");
     sagaService.createSagaRecordInDB(SagaEnum.MACRO_UPDATE_SAGA.toString(), "Test", payload, UUID.fromString(this.macroID));
     this.mockMvc.perform(MockMvcRequestBuilders.post(URL.BASE_URL + URL.PEN_MACRO + "/update-macro")
-      .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_PEN_MACRO")))
+      .with(jwt().jwt(jwt -> jwt.claim("scope", "WRITE_PEN_MACRO")))
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .content(payload))
